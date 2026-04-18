@@ -1,0 +1,11 @@
+# Environment variables
+.env
+
+# Cache directories
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# OS generated files
+.DS_Store
+Thumbs.db
