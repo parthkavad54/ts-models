@@ -16,6 +16,28 @@ class SimulationRequest(BaseModel):
     student_id: str
     hypothetical: dict
 
+class DirectPredictionRequest(BaseModel):
+    attendance: float
+    marks: float
+    assignment: float
+    lms: float
+
+@router.post("/predict")
+async def point_prediction(req: DirectPredictionRequest):
+    import pandas as pd
+    from risk_engine.services.ml_service import model
+    if not model:
+        raise HTTPException(status_code=500, detail="ML model offline")
+    
+    df = pd.DataFrame([{
+        "attendance": req.attendance,
+        "marks": req.marks,
+        "assignment": req.assignment,
+        "lms": req.lms
+    }])
+    pred = model.predict(df)[0]
+    return {"ml_prediction": pred}
+
 @router.post("/calculate/{student_id}")
 async def calculate_risk(student_id: str):
     academic_col = get_collection("AcademicData")
